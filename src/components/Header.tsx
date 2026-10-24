@@ -38,10 +38,10 @@ export default function Header() {
 
   const navLinks = [
     { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/shop' },
-    { name: 'Categories', href: '/shop#categories' },
+    { name: 'Collections', href: '/shop' },
+    { name: 'Hoodies', href: '/shop?category=winter-hoodie' },
+    { name: 'Sweatshirts', href: '/shop?category=winter-sweatshirt' },
     { name: 'New Arrivals', href: '/shop?filter=new' },
-    { name: 'Winter Collection', href: '/shop?category=winter-hoodie' },
     { name: 'About', href: '/about' },
   ];
 
@@ -59,12 +59,13 @@ export default function Header() {
             {/* Left: RoyLux Logo */}
             <div className="flex-1 flex items-center">
               <Link href="/" className="inline-block relative group">
-                <div className="relative w-36 sm:w-44 h-11 sm:h-12 transition-transform duration-300 group-hover:scale-[1.02]">
+                <div className="flex items-center" style={{ maxWidth: '180px', maxHeight: '48px' }}>
                   <Image
                     src="/images/logo/roylux-logo.png"
-                    alt="RoyLux Fashion"
-                    fill
-                    className="object-contain object-left"
+                    alt="RoyLux"
+                    width={170}
+                    height={44}
+                    className="h-9 sm:h-11 w-auto object-contain"
                     priority
                   />
                 </div>

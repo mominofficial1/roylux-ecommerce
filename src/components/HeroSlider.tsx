@@ -43,7 +43,8 @@ export default function HeroSlider() {
 
   return (
     <div
-      className="relative w-full h-[85vh] sm:h-[90vh] lg:h-[95vh] overflow-hidden bg-black select-none"
+      className="relative w-full h-[75vh] sm:h-[85vh] lg:h-[90vh] overflow-hidden bg-[#0c0c0c] select-none"
+      style={{ minHeight: '520px', position: 'relative' }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -60,12 +61,20 @@ export default function HeroSlider() {
             alt={slide.title}
             fill
             priority={idx === 0}
-            className="object-cover object-center scale-[1.01] transform transition-transform duration-[8000ms] ease-out"
+            className="object-cover object-top sm:object-center"
+            sizes="100vw"
           />
-          {/* Subtle gradient overlay to enhance typography readability while keeping full photographic vibrancy */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/50" />
+          {/* Subtle gradient overlay to enhance readability without obscuring photography */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40" />
         </div>
       ))}
+
+      {/* Subtle Corner Brand Emblem */}
+      <div className="absolute top-24 right-6 sm:right-10 z-20 pointer-events-none hidden sm:block">
+        <div className="px-3 py-1.5 rounded-md bg-black/40 backdrop-blur-md border border-white/10 text-[10px] tracking-[0.3em] uppercase text-zinc-300 font-medium">
+          RoyLux • Winter Drop 2026
+        </div>
+      </div>
 
       {/* Slide Content Overlay */}
       <div className="relative z-20 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-20 sm:pb-24 lg:pb-32">
