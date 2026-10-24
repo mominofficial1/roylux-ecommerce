@@ -16,10 +16,12 @@ import {
   FileText,
   RefreshCw,
   ExternalLink,
+  Download,
 } from 'lucide-react';
 import RoyLuxStore from '@/lib/store';
 import { Product, Order, OrderItemSnapshot, OrderStatus, PaymentStatus } from '@/lib/types';
 import { BANGLADESH_DIVISIONS } from '@/lib/locations';
+import { generateInvoicePDF } from '@/lib/pdfInvoice';
 
 export default function DatabaseDashboardPage() {
   const [activeTab, setActiveTab] = useState<'create' | 'list'>('create');
@@ -853,13 +855,23 @@ export default function DatabaseDashboardPage() {
                           </span>
                         </td>
                         <td className="py-3.5 px-4 text-right">
-                          <Link
-                            href={`/database/invoice/${ord.id}`}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-white/5 hover:bg-[#d4af37] hover:text-black text-zinc-300 transition text-[11px] font-medium"
-                          >
-                            <Printer className="w-3.5 h-3.5" />
-                            <span>Invoice</span>
-                          </Link>
+                          <div className="inline-flex items-center gap-2">
+                            <button
+                              onClick={() => generateInvoicePDF(ord, settings)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded bg-[#164e32]/40 hover:bg-[#164e32] text-green-300 hover:text-white transition text-[11px] font-medium border border-green-500/30"
+                              title="Download Official Invoice PDF"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              <span>PDF</span>
+                            </button>
+                            <Link
+                              href={`/database/invoice/${ord.id}`}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-white/5 hover:bg-[#d4af37] hover:text-black text-zinc-300 transition text-[11px] font-medium"
+                            >
+                              <Printer className="w-3.5 h-3.5" />
+                              <span>Invoice</span>
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     ))

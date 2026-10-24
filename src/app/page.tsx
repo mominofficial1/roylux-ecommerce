@@ -7,6 +7,7 @@ import { ArrowRight, Sparkles, Flame } from 'lucide-react';
 import HeroSlider from '@/components/HeroSlider';
 import ProductCard from '@/components/ProductCard';
 import CustomerReviews from '@/components/CustomerReviews';
+import FAQSection from '@/components/FAQSection';
 import RoyLuxStore from '@/lib/store';
 import { Product, Category } from '@/lib/types';
 
@@ -185,6 +186,9 @@ export default function HomePage() {
 
       {/* 6. Realistic Customer Reviews Section (Bangladeshi Verified Buyers) */}
       <CustomerReviews />
+
+      {/* 7. Comprehensive FAQ Section (Collapsible Accordion managed by Admin) */}
+      <FAQSection />
     </div>
   );
 }

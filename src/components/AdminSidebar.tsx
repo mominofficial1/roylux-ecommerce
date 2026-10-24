@@ -13,6 +13,7 @@ import {
   BarChart3,
   Settings,
   Shield,
+  HelpCircle,
   LogOut,
   ExternalLink,
 } from 'lucide-react';
@@ -32,6 +33,7 @@ export default function AdminSidebar({ onLogout }: AdminSidebarProps) {
     { name: 'Hero Slider', href: '/admin/hero', icon: Sliders },
     { name: 'Returns', href: '/admin/returns', icon: RotateCcw },
     { name: 'Reports', href: '/admin/reports', icon: BarChart3 },
+    { name: 'FAQ Manager', href: '/admin/faq', icon: HelpCircle },
     { name: 'Site Settings', href: '/admin/settings', icon: Settings },
     { name: 'Security', href: '/admin/security', icon: Shield },
   ];

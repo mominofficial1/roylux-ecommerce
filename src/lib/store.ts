@@ -10,9 +10,61 @@ import {
   CartItem,
   OrderStatus,
   PaymentStatus,
+  FAQItem,
 } from './types';
 import { db } from './firebase';
 import { doc, setDoc, updateDoc, getDocs, collection } from 'firebase/firestore';
+
+export const INITIAL_FAQS: FAQItem[] = [
+  {
+    id: 'faq-1',
+    question: 'What makes RoyLux fleece different from regular winter wear?',
+    answer: 'Every RoyLux winter piece is precision-milled from 340+ GSM (Grams per Square Meter) combed ringspun cotton fleece with an ultra-soft brushed thermal interior. It maintains structural boxy drape without sagging, prevents pilling after repeated washes, and provides exceptional warmth in temperatures down to 10°C.',
+    category: 'Product & Quality',
+    order: 1,
+    isActive: true,
+  },
+  {
+    id: 'faq-2',
+    question: 'How fast is delivery across Dhaka and other districts of Bangladesh?',
+    answer: 'Inside Dhaka City, orders are delivered within 24 to 48 hours. For all other 63 districts and divisional cities across Bangladesh (Chittagong, Sylhet, Rajshahi, Khulna, Barisal, Rangpur, Mymensingh), express doorstep delivery takes 2 to 4 business days with live SMS tracking.',
+    category: 'Shipping & Delivery',
+    order: 2,
+    isActive: true,
+  },
+  {
+    id: 'faq-3',
+    question: 'Do you offer Cash on Delivery (COD)? Can I inspect before receiving?',
+    answer: 'Yes! We offer 100% Cash on Delivery across all 64 districts in Bangladesh. You may inspect the parcel packaging and confirm product tags with our delivery partner before completing payment.',
+    category: 'Payment & Orders',
+    order: 3,
+    isActive: true,
+  },
+  {
+    id: 'faq-4',
+    question: 'What is your return and size exchange policy?',
+    answer: 'We provide a 7-Day Hassle-Free Doorstep Exchange Policy. If the size or fit isn’t perfect, simply submit an exchange request through your RoyLux account or WhatsApp our concierge at +880 1700-000000. Our rider will deliver the replacement size directly to your doorstep.',
+    category: 'Exchanges & Returns',
+    order: 4,
+    isActive: true,
+  },
+  {
+    id: 'faq-5',
+    question: 'How do I choose my ideal size for RoyLux sweatshirts & hoodies?',
+    answer: 'Our pieces feature a modern luxury relaxed drop-shoulder silhouette. If you prefer a tailored street drape, pick your regular size (refer to our detailed chest and length measurements on each product page). For a dramatic oversized silhouette, choose one size up.',
+    category: 'Sizing & Care',
+    order: 5,
+    isActive: true,
+  },
+  {
+    id: 'faq-6',
+    question: 'How should I wash and maintain my RoyLux heavy fleece garments?',
+    answer: 'To ensure lasting depth of color and GSM density: wash inside-out with cold water (30°C) on a gentle cycle with mild detergent. Do not bleach or tumble dry on high heat. Reshape and flat air dry in shaded breeze.',
+    category: 'Sizing & Care',
+    order: 6,
+    isActive: true,
+  },
+];
 
 export const INITIAL_HERO_SLIDES: HeroSlide[] = [
   {
@@ -808,6 +860,61 @@ class RoyLuxStore {
 
   static logoutCustomer(): void {
     this.setCurrentCustomer(null);
+  }
+
+  // FAQs
+  static getFAQs(): FAQItem[] {
+    return this.get<FAQItem[]>('faqs', INITIAL_FAQS);
+  }
+
+  static saveFAQ(faq: FAQItem): FAQItem {
+    const faqs = this.getFAQs();
+    const index = faqs.findIndex((f) => f.id === faq.id);
+    const updated: FAQItem = {
+      ...faq,
+      updatedAt: new Date().toISOString(),
+      createdAt: faq.createdAt || new Date().toISOString(),
+    };
+
+    if (index >= 0) {
+      faqs[index] = updated;
+    } else {
+      faqs.push(updated);
+    }
+
+    this.set('faqs', faqs);
+
+    // Sync to Cloud Firestore
+    try {
+      setDoc(doc(db, 'faqs', updated.id), updated).catch((err) => {
+        console.warn('Firebase FAQ write warning:', err);
+      });
+    } catch (err) {
+      console.warn('Firebase FAQ error:', err);
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('roylux-faqs-updated'));
+    }
+
+    return updated;
+  }
+
+  static deleteFAQ(id: string): void {
+    const faqs = this.getFAQs().filter((f) => f.id !== id);
+    this.set('faqs', faqs);
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('roylux-faqs-updated'));
+    }
+  }
+
+  static resetFAQs(): FAQItem[] {
+    this.set('faqs', INITIAL_FAQS);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('roylux-faqs-updated'));
+    }
+    return INITIAL_FAQS;
   }
 }
 

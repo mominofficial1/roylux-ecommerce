@@ -4,9 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Printer, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Printer, ArrowLeft, CheckCircle2, Download } from 'lucide-react';
 import RoyLuxStore from '@/lib/store';
 import { Order, SiteSettings } from '@/lib/types';
+import { generateInvoicePDF } from '@/lib/pdfInvoice';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,13 +66,23 @@ export default function InvoicePrintPage() {
           <span>Back to Database</span>
         </Link>
 
-        <button
-          onClick={() => window.print()}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#d4af37] hover:bg-[#b8952b] text-black font-semibold text-xs tracking-wider uppercase transition shadow-lg"
-        >
-          <Printer className="w-4 h-4" />
-          <span>Print / Save as PDF</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => generateInvoicePDF(order, settings)}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#164e32] hover:bg-[#1f6643] text-white font-semibold text-xs tracking-wider uppercase transition shadow-lg border border-green-500/30"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download PDF</span>
+          </button>
+
+          <button
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#d4af37] hover:bg-[#b8952b] text-black font-semibold text-xs tracking-wider uppercase transition shadow-lg"
+          >
+            <Printer className="w-4 h-4" />
+            <span>Print Invoice</span>
+          </button>
+        </div>
       </div>
 
       {/* Printable Invoice Sheet (Standard A4 Proportion) */}

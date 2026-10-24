@@ -9,9 +9,11 @@ import {
   Clock,
   Printer,
   RotateCcw,
+  Download,
 } from 'lucide-react';
 import RoyLuxStore from '@/lib/store';
 import { Order } from '@/lib/types';
+import { generateInvoicePDF } from '@/lib/pdfInvoice';
 
 export const dynamic = 'force-dynamic';
 
@@ -67,12 +69,18 @@ export default function OrderDetailsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={() => generateInvoicePDF(order)}
+            className="px-4 py-2.5 bg-[#164e32] hover:bg-[#1f6643] text-white rounded text-xs font-semibold uppercase tracking-wider transition flex items-center gap-2 shadow-sm"
+          >
+            <Download className="w-3.5 h-3.5" /> Download PDF
+          </button>
           <button
             onClick={() => window.print()}
             className="px-4 py-2.5 bg-zinc-100 hover:bg-black hover:text-white text-black border border-zinc-200 rounded text-xs font-semibold uppercase tracking-wider transition flex items-center gap-2"
           >
-            <Printer className="w-3.5 h-3.5" /> Print Receipt
+            <Printer className="w-3.5 h-3.5" /> Print
           </button>
           <Link
             href="/shop"

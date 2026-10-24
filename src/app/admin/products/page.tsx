@@ -2,7 +2,19 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Plus, Edit2, Trash2, Check, X, Layers, AlertCircle } from 'lucide-react';
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Check,
+  X,
+  Layers,
+  AlertCircle,
+  UploadCloud,
+  Star,
+  Image as ImageIcon,
+  Loader2,
+} from 'lucide-react';
 import RoyLuxStore from '@/lib/store';
 import { Product, Category } from '@/lib/types';
 
@@ -22,7 +34,10 @@ export default function AdminProductsPage() {
   const [shortDesc, setShortDesc] = useState('');
   const [fullDesc, setFullDesc] = useState('');
   const [materials, setMaterials] = useState('');
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [imagesText, setImagesText] = useState('');
+  const [showManualUrl, setShowManualUrl] = useState(false);
   const [sizesText, setSizesText] = useState('M,L,XL');
   const [colorsText, setColorsText] = useState('Charcoal Grey:#383838');
 
@@ -46,7 +61,9 @@ export default function AdminProductsPage() {
     setShortDesc('');
     setFullDesc('');
     setMaterials('85% Combed Cotton, 15% Poly Fleece Heavyweight');
-    setImagesText('/images/hero/hero-1.jpg');
+    setUploadedImages(['/images/hero/hero-1.png']);
+    setImagesText('/images/hero/hero-1.png');
+    setShowManualUrl(false);
     setSizesText('M,L,XL');
     setColorsText('Cream:#F5F2EB');
     setIsModalOpen(true);
@@ -63,19 +80,119 @@ export default function AdminProductsPage() {
     setShortDesc(p.shortDescription);
     setFullDesc(p.fullDescription);
     setMaterials(p.materials || '');
-    setImagesText(p.images.join('\n'));
+    setUploadedImages(p.images && p.images.length > 0 ? p.images : ['/images/hero/hero-1.png']);
+    setImagesText(p.images ? p.images.join('\n') : '');
+    setShowManualUrl(false);
     setSizesText(p.sizes.map((s) => s.name).join(','));
     setColorsText(p.colors.map((c) => `${c.name}:${c.code}`).join(','));
     setIsModalOpen(true);
   };
 
+  // Upload handler with client-side compression + server API upload
+  const handleFileUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+
+    try {
+      // First try uploading to /api/upload
+      const formData = new FormData();
+      Array.from(files).forEach((file) => formData.append('files', file));
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.urls && data.urls.length > 0) {
+          setUploadedImages((prev) => {
+            const next = [...prev, ...data.urls];
+            setImagesText(next.join('\n'));
+            return next;
+          });
+          setIsUploading(false);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('API upload fallback to client image reader:', e);
+    }
+
+    // Fallback: Read client files as compressed Data URLs
+    const readPromises = Array.from(files).map((file) => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = document.createElement('img');
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_SIZE = 1200;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_SIZE) {
+                height = Math.round((height * MAX_SIZE) / width);
+                width = MAX_SIZE;
+              }
+            } else {
+              if (height > MAX_SIZE) {
+                width = Math.round((width * MAX_SIZE) / height);
+                height = MAX_SIZE;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx?.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.86));
+          };
+          img.src = event.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    const results = await Promise.all(readPromises);
+    setUploadedImages((prev) => {
+      const next = [...prev, ...results];
+      setImagesText(next.join('\n'));
+      return next;
+    });
+    setIsUploading(false);
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setUploadedImages((prev) => {
+      const next = prev.filter((_, i) => i !== indexToRemove);
+      setImagesText(next.join('\n'));
+      return next;
+    });
+  };
+
+  const handleSetPrimaryImage = (indexToPrimary: number) => {
+    setUploadedImages((prev) => {
+      if (indexToPrimary === 0) return prev;
+      const target = prev[indexToPrimary];
+      const rest = prev.filter((_, i) => i !== indexToPrimary);
+      const next = [target, ...rest];
+      setImagesText(next.join('\n'));
+      return next;
+    });
+  };
+
   const handleSaveProduct = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const images = imagesText
+    // Use uploadedImages or manual imagesText
+    const manualImages = imagesText
       .split('\n')
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
+
+    const finalImages = uploadedImages.length > 0 ? uploadedImages : manualImages;
 
     const sizes = sizesText
       .split(',')
@@ -114,7 +231,7 @@ export default function AdminProductsPage() {
       shortDescription: shortDesc,
       fullDescription: fullDesc,
       materials,
-      images: images.length > 0 ? images : ['/images/hero/hero-1.jpg'],
+      images: finalImages.length > 0 ? finalImages : ['/images/hero/hero-1.png'],
       sizes,
       colors,
       createdAt: editingProduct ? editingProduct.createdAt : new Date().toISOString(),
@@ -305,18 +422,135 @@ export default function AdminProductsPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block uppercase tracking-wider text-zinc-400 mb-1 font-medium">
-                  Image Paths (One URL per line) *
+              {/* Product Images: Direct File Upload & Management */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="block uppercase tracking-wider text-zinc-300 font-semibold text-xs">
+                    Product Images (Upload Device Photos) *
+                  </label>
+                  <span className="text-[10px] text-[#d4af37] font-medium">
+                    Strict 1:1 Square Ratio Recommended
+                  </span>
+                </div>
+
+                {/* Drag and Drop / Browse Upload Box */}
+                <label className="relative flex flex-col items-center justify-center p-6 border-2 border-dashed border-white/20 hover:border-[#d4af37] bg-black/40 hover:bg-black/60 rounded-xl cursor-pointer transition-all group">
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => handleFileUpload(e.target.files)}
+                  />
+                  {isUploading ? (
+                    <div className="flex flex-col items-center gap-2 text-zinc-300">
+                      <Loader2 className="w-8 h-8 text-[#d4af37] animate-spin" />
+                      <span className="text-xs font-medium">Optimizing &amp; uploading images...</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10 group-hover:bg-[#d4af37]/10 group-hover:border-[#d4af37]/40 flex items-center justify-center transition">
+                        <UploadCloud className="w-6 h-6 text-zinc-400 group-hover:text-[#d4af37] transition" />
+                      </div>
+                      <p className="text-xs font-medium text-white group-hover:text-[#d4af37] transition">
+                        Click to browse or drag &amp; drop photos from your computer
+                      </p>
+                      <p className="text-[10px] text-zinc-400">
+                        Select multiple images (Front, Back, Details, Model). Supports JPG, PNG, WEBP.
+                      </p>
+                    </div>
+                  )}
                 </label>
-                <textarea
-                  rows={3}
-                  required
-                  value={imagesText}
-                  onChange={(e) => setImagesText(e.target.value)}
-                  placeholder="/images/products/product-1/1-front.jpg"
-                  className="w-full bg-black/50 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-[#d4af37] font-mono text-[11px]"
-                />
+
+                {/* Uploaded Photos Gallery Preview */}
+                {uploadedImages.length > 0 && (
+                  <div className="space-y-2 pt-1">
+                    <span className="text-[10px] uppercase tracking-wider text-zinc-400 font-medium">
+                      Uploaded Photos ({uploadedImages.length}): First photo is the primary cover
+                    </span>
+                    <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
+                      {uploadedImages.map((imgUrl, idx) => (
+                        <div
+                          key={idx}
+                          className={`relative aspect-square rounded-lg overflow-hidden border bg-zinc-900 group ${
+                            idx === 0
+                              ? 'border-[#d4af37] ring-2 ring-[#d4af37]/30 shadow-md'
+                              : 'border-white/10'
+                          }`}
+                        >
+                          <img
+                            src={imgUrl}
+                            alt={`Product preview ${idx + 1}`}
+                            className="w-full h-full object-cover object-center"
+                          />
+
+                          {/* Index Badge */}
+                          <div className="absolute top-1 left-1 z-10">
+                            {idx === 0 ? (
+                              <span className="px-1.5 py-0.5 rounded bg-[#d4af37] text-black text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 shadow">
+                                <Star className="w-2.5 h-2.5 fill-black" /> Cover
+                              </span>
+                            ) : (
+                              <span className="w-5 h-5 rounded-full bg-black/70 backdrop-blur-sm text-white text-[10px] font-mono flex items-center justify-center">
+                                {idx + 1}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Hover Actions Overlay */}
+                          <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1.5 p-1">
+                            {idx !== 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetPrimaryImage(idx)}
+                                className="w-full py-1 rounded bg-[#d4af37] hover:bg-[#b8952b] text-black text-[9px] font-bold uppercase tracking-wider transition"
+                              >
+                                Set Cover
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(idx)}
+                              className="p-1 rounded-full bg-red-600/80 hover:bg-red-600 text-white transition"
+                              title="Delete photo"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Optional Manual URL Accordion */}
+                <div className="pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowManualUrl(!showManualUrl)}
+                    className="text-[11px] text-zinc-400 hover:text-white underline underline-offset-2 transition"
+                  >
+                    {showManualUrl ? 'Hide manual image URL box' : 'Or paste image URLs manually'}
+                  </button>
+                  {showManualUrl && (
+                    <div className="mt-2 space-y-1">
+                      <textarea
+                        rows={2}
+                        value={imagesText}
+                        onChange={(e) => {
+                          setImagesText(e.target.value);
+                          const parsed = e.target.value
+                            .split('\n')
+                            .map((s) => s.trim())
+                            .filter((s) => s.length > 0);
+                          setUploadedImages(parsed);
+                        }}
+                        placeholder="/images/products/product-1/1-front.jpg"
+                        className="w-full bg-black/50 border border-white/10 rounded px-3 py-2 text-white focus:outline-none focus:border-[#d4af37] font-mono text-[11px]"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

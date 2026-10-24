@@ -151,7 +151,10 @@ export default function Footer() {
                 <Link href="/account" className="hover:text-black transition">Order Tracking</Link>
               </li>
               <li>
-                <Link href="/return" className="hover:text-black transition">Returns & Exchanges</Link>
+                <Link href="/#faq" className="hover:text-black transition">FAQs &amp; Fabric Guide</Link>
+              </li>
+              <li>
+                <Link href="/return" className="hover:text-black transition">Returns &amp; Exchanges</Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-black transition">Concierge Support</Link>

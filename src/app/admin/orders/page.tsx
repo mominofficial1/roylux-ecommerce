@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Filter, ShoppingBag, Eye, Printer } from 'lucide-react';
+import { Search, Filter, ShoppingBag, Eye, Printer, Download } from 'lucide-react';
 import RoyLuxStore from '@/lib/store';
 import { Order, OrderStatus } from '@/lib/types';
+import { generateInvoicePDF } from '@/lib/pdfInvoice';
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -144,13 +145,23 @@ export default function AdminOrdersPage() {
                       </select>
                     </td>
                     <td className="py-3 px-2 text-right">
-                      <Link
-                        href={`/account/orders/${order.id}`}
-                        target="_blank"
-                        className="text-[#d4af37] hover:underline font-semibold"
-                      >
-                        Invoice / Details
-                      </Link>
+                      <div className="flex items-center justify-end gap-2.5">
+                        <button
+                          onClick={() => generateInvoicePDF(order)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-[#164e32]/40 hover:bg-[#164e32]/80 text-green-300 border border-green-500/30 text-[11px] font-semibold transition"
+                          title="Download Official Invoice PDF"
+                        >
+                          <Download className="w-3 h-3" />
+                          <span>PDF</span>
+                        </button>
+                        <Link
+                          href={`/database/invoice/${order.id}`}
+                          target="_blank"
+                          className="text-[#d4af37] hover:underline font-semibold text-[11px]"
+                        >
+                          Invoice
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
