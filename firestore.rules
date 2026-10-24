@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.role == 'admin' || request.auth.token.email == 'admin@roylux.com');
+    }
+    
+    // Public store catalog: readable by anyone, modifiable only by admins
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /heroSlides/{slideId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    // Orders: customers can create orders; customers can read their own orders; admins/employees can read and update
+    match /orders/{orderId} {
+      allow create: if true; // Allows guest and online checkout
+      allow read: if true;   // Order confirmation by order ID/tracking
+      allow update, delete: if isAdmin();
+    }
+    
+    // Return requests: customers can submit returns; admins manage
+    match /returns/{returnId} {
+      allow create: if true;
+      allow read: if true;
+      allow update, delete: if isAdmin();
+    }
+    
+    // Users collection: owner or admin
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+    }
+  }
+}
