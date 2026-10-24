@@ -143,11 +143,19 @@ export default function ProductDetailPage() {
               sizes="(max-width: 1024px) 100vw, 55vw"
               className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
             />
-            {product.discountPercentage && (
-              <span className="absolute top-4 left-4 px-3 py-1 bg-[#164e32] text-white text-xs font-bold uppercase tracking-widest rounded shadow-md">
-                {product.discountPercentage}% OFF
-              </span>
-            )}
+            {/* Badges: Top Right Corner */}
+            <div className="absolute top-4 right-4 flex flex-col items-end gap-1.5 z-10 pointer-events-none">
+              {product.isNewArrival && (
+                <span className="px-3 py-1 bg-black text-white text-xs font-bold uppercase tracking-widest rounded shadow-md">
+                  New Drop
+                </span>
+              )}
+              {product.discountPercentage && (
+                <span className="px-3 py-1 bg-[#164e32] text-white text-xs font-bold uppercase tracking-widest rounded shadow-md">
+                  {product.discountPercentage}% OFF
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
