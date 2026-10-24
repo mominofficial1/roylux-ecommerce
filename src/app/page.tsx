@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Sparkles, Flame, Tag } from 'lucide-react';
+import { ArrowRight, Sparkles, Flame } from 'lucide-react';
 import HeroSlider from '@/components/HeroSlider';
 import ProductCard from '@/components/ProductCard';
 import RoyLuxStore from '@/lib/store';
@@ -20,29 +20,28 @@ export default function HomePage() {
 
   const newArrivals = products.filter((p) => p.isNewArrival);
   const bestSellers = products.filter((p) => p.isBestSeller);
-  const featured = products.filter((p) => p.isFeatured);
 
   return (
-    <div className="space-y-24 pb-20">
+    <div className="space-y-20 sm:space-y-28 pb-20 bg-[#fbfaf8] text-black">
       {/* 1. Large Hero Slider */}
       <HeroSlider />
 
       {/* 2. Featured Categories Section */}
       <section id="categories" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-white/10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-black/10">
           <div>
-            <span className="text-[11px] uppercase tracking-[0.25em] text-[#d4af37] font-semibold">
+            <span className="text-[11px] uppercase tracking-[0.25em] text-[#b8952b] font-semibold">
               Curated Collections
             </span>
-            <h2 className="text-2xl sm:text-4xl font-light text-white uppercase tracking-tight mt-1 font-serif-luxury">
+            <h2 className="text-2xl sm:text-4xl font-light text-black uppercase tracking-tight mt-1 font-serif-luxury">
               Shop by Category
             </h2>
           </div>
           <Link
             href="/shop"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-zinc-400 hover:text-white transition mt-3 md:mt-0"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-zinc-600 hover:text-black transition mt-3 md:mt-0 font-medium"
           >
-            Explore All <ArrowRight className="w-3.5 h-3.5" />
+            Explore All Collections <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
@@ -51,7 +50,7 @@ export default function HomePage() {
             <Link
               key={category.id}
               href={`/shop?category=${category.slug}`}
-              className="group relative aspect-[3/4] rounded-lg overflow-hidden border border-white/10 bg-zinc-950 block"
+              className="group relative aspect-square rounded-lg overflow-hidden border border-[#e8e6e1] bg-white block shadow-sm hover:shadow-lg transition-all"
             >
               <Image
                 src={category.imageUrl || '/images/hero/hero-1.jpg'}
@@ -60,15 +59,15 @@ export default function HomePage() {
                 sizes="(max-width: 640px) 50vw, 25vw"
                 className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-              <div className="absolute bottom-5 left-5 right-5 space-y-1">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+              <div className="absolute bottom-4 sm:bottom-5 left-4 sm:left-5 right-4 sm:right-5 space-y-1">
                 <h3 className="text-base sm:text-lg font-medium text-white uppercase tracking-wider group-hover:text-[#d4af37] transition-colors">
                   {category.name}
                 </h3>
-                <p className="text-[11px] text-zinc-400 font-light line-clamp-1">
+                <p className="text-[11px] text-zinc-300 font-light line-clamp-1">
                   {category.description}
                 </p>
-                <div className="pt-2 flex items-center text-[10px] uppercase tracking-widest text-[#d4af37] font-semibold">
+                <div className="pt-1.5 flex items-center text-[10px] uppercase tracking-widest text-[#d4af37] font-semibold">
                   <span>Discover Pieces</span>
                   <ArrowRight className="w-3 h-3 ml-1 transform group-hover:translate-x-1 transition-transform" />
                 </div>
@@ -80,19 +79,19 @@ export default function HomePage() {
 
       {/* 3. New Arrivals Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-white/10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-black/10">
           <div>
-            <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-[#d4af37] font-semibold">
+            <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-[#b8952b] font-semibold">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Fresh Drop</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-light text-white uppercase tracking-tight mt-1 font-serif-luxury">
+            <h2 className="text-2xl sm:text-4xl font-light text-black uppercase tracking-tight mt-1 font-serif-luxury">
               New Arrivals
             </h2>
           </div>
           <Link
             href="/shop?filter=new"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-zinc-400 hover:text-white transition mt-3 md:mt-0"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-zinc-600 hover:text-black transition mt-3 md:mt-0 font-medium"
           >
             View All New <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -107,7 +106,7 @@ export default function HomePage() {
 
       {/* 4. Luxury Promotional Editorial Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-r from-zinc-950 via-[#101010] to-[#164e32]/30 p-8 sm:p-14 lg:p-20 shadow-2xl">
+        <div className="relative rounded-2xl overflow-hidden border border-black/10 bg-[#161616] text-white p-8 sm:p-14 lg:p-20 shadow-xl">
           <div className="relative z-10 max-w-xl space-y-4">
             <span className="inline-block px-3 py-1 rounded bg-[#164e32] text-white text-[10px] font-bold uppercase tracking-[0.2em]">
               The Winter Standard
@@ -117,18 +116,18 @@ export default function HomePage() {
               Tailored Architecture.
             </h2>
             <p className="text-zinc-300 text-sm sm:text-base font-light leading-relaxed">
-              Every RoyLux garment is built using dense 340+ GSM brushed combed cotton, reinforced seams, and custom hardware aglets designed to withstand winters in immaculate style.
+              Every RoyLux garment is built using dense 340+ GSM brushed combed cotton fleece, reinforced stitching, and custom hardware aglets designed to withstand winters in immaculate comfort and style.
             </p>
             <div className="pt-4 flex flex-wrap gap-4">
               <Link
                 href="/shop?category=winter-hoodie"
-                className="px-7 py-3.5 bg-white text-black hover:bg-[#d4af37] font-semibold text-xs uppercase tracking-[0.2em] rounded-sm transition shadow-lg"
+                className="px-7 py-3.5 bg-white text-black hover:bg-[#b8952b] font-semibold text-xs uppercase tracking-[0.2em] rounded-sm transition shadow-lg"
               >
                 Shop Winter Hoodies
               </Link>
               <Link
                 href="/about"
-                className="px-7 py-3.5 border border-white/20 text-white hover:bg-white/10 font-semibold text-xs uppercase tracking-[0.2em] rounded-sm transition"
+                className="px-7 py-3.5 border border-white/30 text-white hover:bg-white/10 font-semibold text-xs uppercase tracking-[0.2em] rounded-sm transition"
               >
                 Our Craftsmanship
               </Link>
@@ -136,7 +135,7 @@ export default function HomePage() {
           </div>
 
           {/* Background Decorative Accent */}
-          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-20 pointer-events-none hidden lg:block">
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-25 pointer-events-none hidden lg:block">
             <div className="relative w-full h-full">
               <Image
                 src="/images/products/product-1/1-front.jpg"
@@ -151,19 +150,19 @@ export default function HomePage() {
 
       {/* 5. Best Sellers Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 pb-4 border-b border-white/10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 pb-4 border-b border-black/10">
           <div>
-            <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-[#d4af37] font-semibold">
-              <Flame className="w-3.5 h-3.5 text-orange-500" />
+            <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-[#b8952b] font-semibold">
+              <Flame className="w-3.5 h-3.5 text-orange-600" />
               <span>Customer Favorites</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-light text-white uppercase tracking-tight mt-1 font-serif-luxury">
+            <h2 className="text-2xl sm:text-4xl font-light text-black uppercase tracking-tight mt-1 font-serif-luxury">
               Best Sellers
             </h2>
           </div>
           <Link
             href="/shop?filter=best-seller"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-zinc-400 hover:text-white transition mt-3 md:mt-0"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-zinc-600 hover:text-black transition mt-3 md:mt-0 font-medium"
           >
             View All Best Sellers <ArrowRight className="w-3.5 h-3.5" />
           </Link>

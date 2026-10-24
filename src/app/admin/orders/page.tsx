@@ -17,6 +17,9 @@ export default function AdminOrdersPage() {
 
   useEffect(() => {
     loadData();
+    RoyLuxStore.syncWithFirebase().then(() => {
+      loadData();
+    });
   }, []);
 
   const handleStatusChange = (orderId: string, newStatus: OrderStatus) => {

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Filter, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import RoyLuxStore from '@/lib/store';
 import { Product, Category } from '@/lib/types';
@@ -45,8 +45,9 @@ function ShopContent() {
         if (filterParam === 'featured' && !p.isFeatured) return false;
 
         // Size filter
-        if (selectedSize !== 'all' && !p.sizes.some((s) => s.name === selectedSize)) {
-          return false;
+        if (selectedSize !== 'all') {
+          const hasSize = p.sizes.some((s) => s.name === selectedSize && s.stock > 0);
+          if (!hasSize) return false;
         }
 
         // Price filter
@@ -63,30 +64,30 @@ function ShopContent() {
   }, [products, categories, selectedCategory, filterParam, selectedSize, maxPrice, sortBy]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10 bg-[#fbfaf8] text-black">
       {/* Page Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
-        <span className="text-[11px] uppercase tracking-[0.25em] text-[#d4af37] font-semibold">
+        <span className="text-[11px] uppercase tracking-[0.25em] text-[#b8952b] font-semibold">
           Winter 2026 Collection
         </span>
-        <h1 className="text-3xl sm:text-5xl font-light text-white uppercase tracking-tight font-serif-luxury">
+        <h1 className="text-3xl sm:text-5xl font-light text-black uppercase tracking-tight font-serif-luxury">
           The RoyLux Wardrobe
         </h1>
-        <p className="text-zinc-400 text-xs sm:text-sm font-light">
+        <p className="text-zinc-600 text-xs sm:text-sm font-light">
           Engineered for thermal comfort, tailored for elevated everyday luxury.
         </p>
       </div>
 
       {/* Filter and Sort Toolbar */}
-      <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs">
+      <div className="p-4 rounded-xl bg-white border border-[#e8e6e1] shadow-sm flex flex-wrap items-center justify-between gap-4 text-xs">
         {/* Category Chips */}
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => setSelectedCategory('all')}
             className={`px-3.5 py-1.5 rounded-full uppercase tracking-wider font-semibold transition ${
               selectedCategory === 'all'
-                ? 'bg-white text-black shadow-md'
-                : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
+                ? 'bg-black text-white shadow-sm'
+                : 'bg-zinc-100 text-zinc-700 hover:text-black hover:bg-zinc-200'
             }`}
           >
             All Products
@@ -97,8 +98,8 @@ function ShopContent() {
               onClick={() => setSelectedCategory(c.slug)}
               className={`px-3.5 py-1.5 rounded-full uppercase tracking-wider font-semibold transition ${
                 selectedCategory === c.slug
-                  ? 'bg-white text-black shadow-md'
-                  : 'bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10'
+                  ? 'bg-black text-white shadow-sm'
+                  : 'bg-zinc-100 text-zinc-700 hover:text-black hover:bg-zinc-200'
               }`}
             >
               {c.name}
@@ -110,11 +111,11 @@ function ShopContent() {
         <div className="flex items-center gap-3 ml-auto">
           {/* Size filter */}
           <div className="flex items-center gap-1.5">
-            <span className="text-zinc-500 uppercase tracking-wider">Size:</span>
+            <span className="text-zinc-500 uppercase tracking-wider font-medium">Size:</span>
             <select
               value={selectedSize}
               onChange={(e) => setSelectedSize(e.target.value)}
-              className="bg-black/50 border border-white/15 text-white rounded px-2.5 py-1.5 focus:outline-none focus:border-[#d4af37]"
+              className="bg-zinc-50 border border-zinc-200 text-black rounded px-2.5 py-1.5 focus:outline-none focus:border-black text-xs"
             >
               <option value="all">All Sizes</option>
               <option value="S">S</option>
@@ -130,7 +131,7 @@ function ShopContent() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="bg-black/50 border border-white/15 text-white rounded px-2.5 py-1.5 focus:outline-none focus:border-[#d4af37]"
+              className="bg-zinc-50 border border-zinc-200 text-black rounded px-2.5 py-1.5 focus:outline-none focus:border-black text-xs"
             >
               <option value="featured">Featured</option>
               <option value="newest">Newest Drops</option>
@@ -151,7 +152,7 @@ function ShopContent() {
                 setSelectedCategory('all');
                 setSelectedSize('all');
               }}
-              className="text-[#d4af37] hover:underline"
+              className="text-black font-medium hover:underline"
             >
               Reset Filters
             </button>
@@ -159,15 +160,15 @@ function ShopContent() {
         </div>
 
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-24 border border-dashed border-white/10 rounded-2xl space-y-4">
-            <p className="text-zinc-400 text-sm">No products found matching your current filter criteria.</p>
+          <div className="text-center py-24 border border-dashed border-zinc-200 rounded-2xl space-y-4 bg-white">
+            <p className="text-zinc-600 text-sm">No products found matching your current filter criteria.</p>
             <button
               onClick={() => {
                 setSelectedCategory('all');
                 setSelectedSize('all');
                 setMaxPrice(3500);
               }}
-              className="px-6 py-2.5 bg-[#164e32] text-white text-xs uppercase font-semibold tracking-wider rounded hover:bg-[#1e6340] transition"
+              className="px-6 py-2.5 bg-black text-white text-xs uppercase font-semibold tracking-wider rounded hover:bg-zinc-800 transition"
             >
               Clear Filters
             </button>

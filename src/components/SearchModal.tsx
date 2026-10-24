@@ -15,15 +15,19 @@ interface SearchModalProps {
 export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    if (!query.trim()) {
+    setAllProducts(RoyLuxStore.getProducts());
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (query.trim() === '') {
       setResults([]);
       return;
     }
     const q = query.toLowerCase();
-    const all = RoyLuxStore.getProducts();
-    const filtered = all.filter(
+    const filtered = allProducts.filter(
       (p) =>
         p.name.toLowerCase().includes(q) ||
         p.category.toLowerCase().includes(q) ||
@@ -31,42 +35,42 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         p.shortDescription.toLowerCase().includes(q)
     );
     setResults(filtered);
-  }, [query]);
+  }, [query, allProducts]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 text-black">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Box */}
-      <div className="relative w-full max-w-2xl bg-[#141414] border border-white/10 rounded-xl text-white shadow-2xl z-10 overflow-hidden animate-fade-in">
+      <div className="relative w-full max-w-2xl bg-white border border-[#e8e6e1] rounded-xl text-black shadow-2xl z-10 overflow-hidden animate-fade-in">
         {/* Search Input */}
-        <div className="flex items-center px-5 py-4 border-b border-white/10">
+        <div className="flex items-center px-5 py-4 border-b border-[#e8e6e1] bg-[#fbfaf8]">
           <Search className="w-5 h-5 text-zinc-400 mr-3 shrink-0" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search hoodies, sweatshirts, collections..."
-            className="w-full bg-transparent text-white placeholder-zinc-500 focus:outline-none text-base font-light"
+            className="w-full bg-transparent text-black placeholder-zinc-400 focus:outline-none text-base font-light"
             autoFocus
           />
           {query && (
             <button
               onClick={() => setQuery('')}
-              className="p-1 text-zinc-500 hover:text-white mr-2"
+              className="p-1 text-zinc-400 hover:text-black mr-2"
             >
               <X className="w-4 h-4" />
             </button>
           )}
           <button
             onClick={onClose}
-            className="text-xs uppercase tracking-wider text-zinc-400 hover:text-white px-2 py-1 rounded bg-white/5"
+            className="text-xs uppercase tracking-wider text-zinc-500 hover:text-black px-2 py-1 rounded bg-zinc-100"
           >
             ESC
           </button>
@@ -75,11 +79,11 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         {/* Results Body */}
         <div className="max-h-[60vh] overflow-y-auto p-4 space-y-2">
           {query.trim() === '' ? (
-            <div className="py-8 text-center text-zinc-500 text-xs uppercase tracking-widest">
+            <div className="py-8 text-center text-zinc-400 text-xs uppercase tracking-widest">
               Type to discover luxury winter apparel
             </div>
           ) : results.length === 0 ? (
-            <div className="py-12 text-center text-zinc-400 text-sm">
+            <div className="py-12 text-center text-zinc-500 text-sm">
               No matching products found for &ldquo;{query}&rdquo;
             </div>
           ) : (
@@ -88,9 +92,9 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                 key={product.id}
                 href={`/product/${product.slug}`}
                 onClick={onClose}
-                className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition border border-transparent hover:border-white/5"
+                className="flex items-center gap-4 p-3 rounded-lg hover:bg-zinc-50 transition border border-transparent hover:border-zinc-200"
               >
-                <div className="relative w-14 h-16 bg-zinc-900 rounded overflow-hidden shrink-0">
+                <div className="relative w-14 aspect-square bg-[#f4f2ee] rounded overflow-hidden shrink-0">
                   <Image
                     src={product.images[0]}
                     alt={product.name}
@@ -99,13 +103,13 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium text-white truncate">{product.name}</h4>
-                  <p className="text-xs text-zinc-400 mt-0.5">{product.category} • SKU: {product.sku}</p>
-                  <span className="text-sm font-semibold text-[#d4af37] mt-1 inline-block">
+                  <h4 className="text-sm font-medium text-black truncate">{product.name}</h4>
+                  <p className="text-xs text-zinc-500 mt-0.5">{product.category} • SKU: {product.sku}</p>
+                  <span className="text-sm font-semibold text-black mt-1 inline-block">
                     ৳{product.price.toLocaleString()}
                   </span>
                 </div>
-                <ArrowRight className="w-4 h-4 text-zinc-500 group-hover:text-white shrink-0" />
+                <ArrowRight className="w-4 h-4 text-zinc-400 group-hover:text-black shrink-0" />
               </Link>
             ))
           )}

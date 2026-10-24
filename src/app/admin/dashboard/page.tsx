@@ -21,6 +21,8 @@ export default function AdminDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [returns, setReturns] = useState<ReturnRequest[]>([]);
+  const [syncing, setSyncing] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<string | null>(null);
 
   const loadData = () => {
     setOrders(RoyLuxStore.getOrders());
@@ -28,8 +30,26 @@ export default function AdminDashboardPage() {
     setReturns(RoyLuxStore.getReturns());
   };
 
+  const handleFirebaseSync = async () => {
+    setSyncing(true);
+    setSyncStatus('Syncing with Cloud Firebase...');
+    try {
+      const res = await RoyLuxStore.syncWithFirebase();
+      loadData();
+      setSyncStatus(`Synced with Firebase (${res.ordersCount} orders)`);
+      setTimeout(() => setSyncStatus(null), 4000);
+    } catch {
+      setSyncStatus('Using local cache');
+      setTimeout(() => setSyncStatus(null), 3000);
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   useEffect(() => {
     loadData();
+    // Automatically sync latest orders and returns from Firebase on load
+    handleFirebaseSync();
   }, []);
 
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
@@ -53,9 +73,21 @@ export default function AdminDashboardPage() {
           <h1 className="text-2xl sm:text-3xl font-light text-white uppercase tracking-tight font-serif-luxury mt-1">
             RoyLux Operations Center
           </h1>
+          {syncStatus && (
+            <p className="text-xs text-[#d4af37] mt-1 font-mono flex items-center gap-1.5 animate-pulse">
+              ● {syncStatus}
+            </p>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleFirebaseSync}
+            disabled={syncing}
+            className="px-3.5 py-2 bg-white/10 hover:bg-white text-zinc-200 hover:text-black rounded text-xs font-semibold uppercase tracking-wider transition flex items-center gap-1.5"
+          >
+            {syncing ? 'Syncing...' : 'Sync Firebase'}
+          </button>
           <Link
             href="/admin/products?action=new"
             className="px-4 py-2 bg-[#164e32] hover:bg-[#1e6341] text-white rounded text-xs font-semibold uppercase tracking-wider transition flex items-center gap-1.5 shadow-lg shadow-[#164e32]/20"

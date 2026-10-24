@@ -82,6 +82,10 @@ export default function DatabaseDashboardPage() {
       const name = sessionStorage.getItem('roylux_staff_name') || 'Authorized Staff';
       setStaffName(name);
     }
+
+    RoyLuxStore.syncWithFirebase().then(() => {
+      setOrders(RoyLuxStore.getOrders());
+    });
   }, []);
 
   // Update district when division changes

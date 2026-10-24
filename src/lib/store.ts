@@ -11,6 +11,8 @@ import {
   OrderStatus,
   PaymentStatus,
 } from './types';
+import { db } from './firebase';
+import { doc, setDoc, updateDoc, getDocs, collection } from 'firebase/firestore';
 
 export const INITIAL_HERO_SLIDES: HeroSlide[] = [
   {
@@ -358,16 +360,28 @@ class RoyLuxStore {
   static saveProduct(product: Product): void {
     const products = this.getProducts();
     const index = products.findIndex((p) => p.id === product.id);
+    let targetProduct: Product;
     if (index >= 0) {
-      products[index] = { ...product, updatedAt: new Date().toISOString() };
+      targetProduct = { ...product, updatedAt: new Date().toISOString() };
+      products[index] = targetProduct;
     } else {
-      products.unshift({
+      targetProduct = {
         ...product,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-      });
+      };
+      products.unshift(targetProduct);
     }
     this.set('products', products);
+
+    // Sync to Cloud Firestore
+    try {
+      setDoc(doc(db, 'products', targetProduct.id), targetProduct).catch((err) => {
+        console.warn('Firebase product write warning:', err);
+      });
+    } catch (err) {
+      console.warn('Firebase product error:', err);
+    }
   }
 
   static deleteProduct(id: string): void {
@@ -453,6 +467,16 @@ class RoyLuxStore {
     };
     orders.unshift(newOrder);
     this.set('orders', orders);
+
+    // Sync order to Cloud Firestore
+    try {
+      setDoc(doc(db, 'orders', newOrder.id), newOrder).catch((err) => {
+        console.warn('Firebase order write warning:', err);
+      });
+    } catch (err) {
+      console.warn('Firebase order error:', err);
+    }
+
     return newOrder;
   }
 
@@ -476,6 +500,23 @@ class RoyLuxStore {
       });
       orders[index].updatedAt = new Date().toISOString();
       this.set('orders', orders);
+
+      // Sync status update to Cloud Firestore
+      try {
+        const updatePayload: any = {
+          orderStatus: status,
+          statusTimeline: orders[index].statusTimeline,
+          updatedAt: orders[index].updatedAt,
+        };
+        if (paymentStatus) {
+          updatePayload.paymentStatus = paymentStatus;
+        }
+        updateDoc(doc(db, 'orders', orderId), updatePayload).catch((err) => {
+          console.warn('Firebase order status update warning:', err);
+        });
+      } catch (err) {
+        console.warn('Firebase updateDoc error:', err);
+      }
     }
   }
 
@@ -496,6 +537,16 @@ class RoyLuxStore {
     };
     returns.unshift(newReturn);
     this.set('returns', returns);
+
+    // Sync return request to Cloud Firestore
+    try {
+      setDoc(doc(db, 'returns', newReturn.id), newReturn).catch((err) => {
+        console.warn('Firebase return write warning:', err);
+      });
+    } catch (err) {
+      console.warn('Firebase return error:', err);
+    }
+
     return newReturn;
   }
 
@@ -507,6 +558,75 @@ class RoyLuxStore {
       if (adminNotes) returns[index].adminNotes = adminNotes;
       returns[index].updatedAt = new Date().toISOString();
       this.set('returns', returns);
+
+      // Sync to Cloud Firestore
+      try {
+        const payload: any = {
+          status,
+          updatedAt: returns[index].updatedAt,
+        };
+        if (adminNotes) payload.adminNotes = adminNotes;
+        updateDoc(doc(db, 'returns', id), payload).catch((err) => {
+          console.warn('Firebase return status update warning:', err);
+        });
+      } catch (err) {
+        console.warn('Firebase return updateDoc error:', err);
+      }
+    }
+  }
+
+  // Firebase Remote Sync
+  static async syncWithFirebase(): Promise<{ ordersCount: number; returnsCount: number }> {
+    try {
+      // 1. Fetch Orders from Firebase
+      const ordersSnapshot = await getDocs(collection(db, 'orders'));
+      if (!ordersSnapshot.empty) {
+        const remoteOrders: Order[] = [];
+        ordersSnapshot.forEach((docSnap) => {
+          remoteOrders.push(docSnap.data() as Order);
+        });
+        // Merge with existing local orders
+        const localOrders = this.getOrders();
+        const map = new Map<string, Order>();
+        remoteOrders.forEach((o) => map.set(o.id, o));
+        localOrders.forEach((o) => {
+          if (!map.has(o.id)) map.set(o.id, o);
+        });
+        const mergedOrders = Array.from(map.values()).sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        this.set('orders', mergedOrders);
+      }
+
+      // 2. Fetch Returns from Firebase
+      const returnsSnapshot = await getDocs(collection(db, 'returns'));
+      if (!returnsSnapshot.empty) {
+        const remoteReturns: ReturnRequest[] = [];
+        returnsSnapshot.forEach((docSnap) => {
+          remoteReturns.push(docSnap.data() as ReturnRequest);
+        });
+        const localReturns = this.getReturns();
+        const map = new Map<string, ReturnRequest>();
+        remoteReturns.forEach((r) => map.set(r.id, r));
+        localReturns.forEach((r) => {
+          if (!map.has(r.id)) map.set(r.id, r);
+        });
+        const mergedReturns = Array.from(map.values()).sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        this.set('returns', mergedReturns);
+      }
+
+      return {
+        ordersCount: this.getOrders().length,
+        returnsCount: this.getReturns().length,
+      };
+    } catch (err) {
+      console.warn('Firebase syncWithFirebase failed, using local fallback:', err);
+      return {
+        ordersCount: this.getOrders().length,
+        returnsCount: this.getReturns().length,
+      };
     }
   }
 

@@ -43,8 +43,7 @@ export default function HeroSlider() {
 
   return (
     <div
-      className="relative w-full h-[75vh] sm:h-[85vh] lg:h-[90vh] overflow-hidden bg-[#0c0c0c] select-none"
-      style={{ minHeight: '520px', position: 'relative' }}
+      className="relative w-full h-[65vh] sm:h-[80vh] lg:h-[88vh] min-h-[460px] sm:min-h-[550px] overflow-hidden bg-[#111111] select-none"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -62,42 +61,42 @@ export default function HeroSlider() {
             fill
             priority={idx === 0}
             className="object-cover object-top sm:object-center"
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 100vw"
           />
           {/* Subtle gradient overlay to enhance readability without obscuring photography */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/30" />
         </div>
       ))}
 
       {/* Subtle Corner Brand Emblem */}
-      <div className="absolute top-24 right-6 sm:right-10 z-20 pointer-events-none hidden sm:block">
-        <div className="px-3 py-1.5 rounded-md bg-black/40 backdrop-blur-md border border-white/10 text-[10px] tracking-[0.3em] uppercase text-zinc-300 font-medium">
-          RoyLux • Winter Drop 2026
+      <div className="absolute top-20 sm:top-24 right-4 sm:right-10 z-20 pointer-events-none">
+        <div className="px-3 py-1 rounded bg-black/40 backdrop-blur-md border border-white/10 text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-zinc-300 font-medium">
+          RoyLux • Winter 2026
         </div>
       </div>
 
       {/* Slide Content Overlay */}
-      <div className="relative z-20 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-20 sm:pb-24 lg:pb-32">
-        <div className="max-w-2xl space-y-4 animate-fade-in key={currentIndex}">
+      <div className="relative z-20 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-12 sm:pb-20 lg:pb-28">
+        <div className="max-w-2xl space-y-3 sm:space-y-4 animate-fade-in key={currentIndex}">
           {currentSlide.badge && (
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#d4af37] text-[10px] sm:text-xs uppercase tracking-[0.25em] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] animate-ping" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[#b8952b] text-[10px] sm:text-xs uppercase tracking-[0.25em] font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#b8952b] animate-ping" />
               {currentSlide.badge}
             </div>
           )}
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-light text-white uppercase tracking-tight leading-[1.1] font-serif-luxury">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-light text-white uppercase tracking-tight leading-[1.15] font-serif-luxury">
             {currentSlide.title}
           </h1>
 
-          <p className="text-sm sm:text-lg text-zinc-300 font-light tracking-wide max-w-lg">
+          <p className="text-xs sm:text-base text-zinc-300 font-light tracking-wide max-w-lg line-clamp-2 sm:line-clamp-none">
             {currentSlide.subtitle}
           </p>
 
-          <div className="pt-2 flex flex-wrap gap-4">
+          <div className="pt-2 flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md sm:max-w-none">
             <Link
               href={currentSlide.buttonLink}
-              className="inline-flex items-center gap-3 px-7 py-3.5 bg-white text-black hover:bg-[#d4af37] hover:text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-sm transition-all duration-300 shadow-xl group"
+              className="inline-flex items-center justify-center gap-2.5 px-6 py-3 bg-white text-black hover:bg-[#b8952b] hover:text-black font-semibold text-xs uppercase tracking-[0.2em] rounded-sm transition-all duration-300 shadow-xl group"
             >
               <span>{currentSlide.buttonText}</span>
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
@@ -105,9 +104,9 @@ export default function HeroSlider() {
 
             <Link
               href="/shop"
-              className="inline-flex items-center px-7 py-3.5 border border-white/40 text-white hover:bg-white/10 font-semibold text-xs uppercase tracking-[0.2em] rounded-sm backdrop-blur-sm transition"
+              className="inline-flex items-center justify-center px-6 py-3 border border-white/50 text-white hover:bg-white/10 font-semibold text-xs uppercase tracking-[0.2em] rounded-sm backdrop-blur-sm transition"
             >
-              Explore All Drops
+              Explore Collections
             </Link>
           </div>
         </div>
@@ -118,28 +117,28 @@ export default function HeroSlider() {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/40 hover:bg-black/70 text-white/80 hover:text-white backdrop-blur-sm border border-white/10 transition-all opacity-0 group-hover:opacity-100 hover:scale-105"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-black/40 hover:bg-black/70 text-white/80 hover:text-white backdrop-blur-sm border border-white/10 transition-all opacity-70 sm:opacity-0 hover:opacity-100"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 sm:w-5 h-4 sm:h-5" />
           </button>
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/40 hover:bg-black/70 text-white/80 hover:text-white backdrop-blur-sm border border-white/10 transition-all opacity-0 group-hover:opacity-100 hover:scale-105"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-2 sm:p-3 rounded-full bg-black/40 hover:bg-black/70 text-white/80 hover:text-white backdrop-blur-sm border border-white/10 transition-all opacity-70 sm:opacity-0 hover:opacity-100"
             aria-label="Next slide"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 sm:w-5 h-4 sm:h-5" />
           </button>
 
           {/* Dots Indicator */}
-          <div className="absolute bottom-8 right-8 z-20 flex items-center space-x-2">
+          <div className="absolute bottom-4 right-4 sm:bottom-8 sm:right-8 z-20 flex items-center space-x-2">
             {slides.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentIndex(idx)}
                 className={`transition-all duration-300 rounded-full ${
                   idx === currentIndex
-                    ? 'w-8 h-1.5 bg-[#d4af37]'
+                    ? 'w-7 sm:w-8 h-1.5 bg-[#b8952b]'
                     : 'w-2 h-1.5 bg-white/40 hover:bg-white/70'
                 }`}
                 aria-label={`Go to slide ${idx + 1}`}

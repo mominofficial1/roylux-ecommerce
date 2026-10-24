@@ -46,12 +46,12 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div
-      className="group relative flex flex-col bg-[#141414] border border-white/5 rounded-lg overflow-hidden transition-all duration-300 hover:border-white/20 hover:shadow-2xl"
+      className="group relative flex flex-col bg-white border border-[#e8e6e1] rounded-lg overflow-hidden transition-all duration-300 hover:border-black/30 hover:shadow-xl"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Product Image Frame */}
-      <Link href={`/product/${product.slug}`} className="relative aspect-[3/4] w-full overflow-hidden bg-zinc-950 block">
+      {/* Product Image Frame: Strict 1:1 Aspect Ratio */}
+      <Link href={`/product/${product.slug}`} className="relative aspect-square w-full overflow-hidden bg-[#f4f2ee] block">
         <Image
           src={isHovered ? secondaryImage : primaryImage}
           alt={product.name}
@@ -63,7 +63,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10 pointer-events-none">
           {product.isNewArrival && (
-            <span className="px-2.5 py-1 bg-white text-black text-[10px] font-bold uppercase tracking-widest rounded-sm shadow-md">
+            <span className="px-2.5 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-widest rounded-sm shadow-md">
               New Drop
             </span>
           )}
@@ -76,32 +76,32 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Quick View Button overlay */}
         <div className="absolute bottom-3 left-3 right-3 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-          <span className="w-full py-2.5 bg-black/75 backdrop-blur-md text-white text-[11px] font-semibold uppercase tracking-widest text-center rounded flex items-center justify-center gap-1.5 border border-white/10 hover:bg-black transition">
+          <span className="w-full py-2.5 bg-black/85 backdrop-blur-md text-white text-[11px] font-semibold uppercase tracking-widest text-center rounded flex items-center justify-center gap-1.5 hover:bg-black transition shadow-lg">
             <Eye className="w-3.5 h-3.5" /> View Details
           </span>
         </div>
       </Link>
 
       {/* Product Info */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
+      <div className="p-4 flex-1 flex flex-col justify-between bg-white text-black">
         <div>
           <span className="text-[11px] uppercase tracking-wider text-zinc-500 font-medium">
             {product.category}
           </span>
 
           <Link href={`/product/${product.slug}`}>
-            <h3 className="text-sm font-medium text-white group-hover:text-[#d4af37] transition-colors line-clamp-1 mt-1">
+            <h3 className="text-sm font-medium text-black group-hover:text-[#b8952b] transition-colors line-clamp-1 mt-1">
               {product.name}
             </h3>
           </Link>
 
           {/* Pricing */}
           <div className="flex items-center gap-2 mt-2">
-            <span className="text-base font-semibold text-white">
+            <span className="text-base font-semibold text-black">
               ৳{product.price.toLocaleString()}
             </span>
             {product.previousPrice && (
-              <span className="text-xs text-zinc-500 line-through">
+              <span className="text-xs text-zinc-400 line-through">
                 ৳{product.previousPrice.toLocaleString()}
               </span>
             )}
@@ -109,7 +109,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Size Selection & Quick Add */}
-        <div className="pt-3 border-t border-white/5 mt-3 space-y-2.5">
+        <div className="pt-3 border-t border-zinc-100 mt-3 space-y-2.5">
           {/* Quick Size Chips */}
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-1.5">
@@ -122,8 +122,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                   }}
                   className={`w-7 h-7 text-[11px] font-semibold rounded border transition ${
                     selectedSize === s.name
-                      ? 'border-[#d4af37] bg-[#d4af37]/10 text-[#d4af37]'
-                      : 'border-white/10 text-zinc-400 hover:border-white/30 hover:text-white'
+                      ? 'border-black bg-black text-white'
+                      : 'border-zinc-200 text-zinc-600 hover:border-black hover:text-black bg-zinc-50'
                   }`}
                 >
                   {s.name}
@@ -134,7 +134,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {/* Color Dot Indicator */}
             {product.colors.length > 0 && (
               <div
-                className="w-3.5 h-3.5 rounded-full border border-white/30"
+                className="w-3.5 h-3.5 rounded-full border border-zinc-300"
                 style={{ backgroundColor: product.colors[0].code }}
                 title={product.colors[0].name}
               />
@@ -147,8 +147,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             disabled={isAdding}
             className={`w-full py-2.5 px-3 rounded text-xs font-semibold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 ${
               isAdded
-                ? 'bg-[#164e32] text-white shadow-lg shadow-[#164e32]/30'
-                : 'bg-white/10 hover:bg-white text-zinc-200 hover:text-black border border-white/10'
+                ? 'bg-[#164e32] text-white shadow-md'
+                : 'bg-black hover:bg-zinc-800 text-white shadow-sm'
             }`}
           >
             {isAdded ? (

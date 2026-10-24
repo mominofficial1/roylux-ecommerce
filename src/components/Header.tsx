@@ -50,8 +50,8 @@ export default function Header() {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
           isScrolled
-            ? 'glass-header py-3.5 shadow-xl'
-            : 'bg-gradient-to-b from-black/90 via-black/60 to-transparent py-5'
+            ? 'bg-[#fbfaf8]/95 backdrop-blur-md py-3.5 shadow-sm border-b border-black/5'
+            : 'bg-[#fbfaf8]/85 backdrop-blur-sm py-4 border-b border-black/5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,9 +63,9 @@ export default function Header() {
                   <Image
                     src="/images/logo/roylux-logo.png"
                     alt="RoyLux"
-                    width={170}
-                    height={44}
-                    className="h-9 sm:h-11 w-auto object-contain"
+                    width={160}
+                    height={42}
+                    className="h-8 sm:h-10 w-auto object-contain filter invert"
                     priority
                   />
                 </div>
@@ -78,10 +78,10 @@ export default function Header() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-xs uppercase tracking-[0.2em] font-medium text-zinc-300 hover:text-white transition relative py-1 group"
+                  className="text-xs uppercase tracking-[0.2em] font-medium text-zinc-700 hover:text-black transition relative py-1 group"
                 >
                   {link.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#d4af37] transition-all duration-300 group-hover:w-full" />
+                  <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black transition-all duration-300 group-hover:w-full" />
                 </Link>
               ))}
             </nav>
@@ -91,7 +91,7 @@ export default function Header() {
               {/* Search Trigger */}
               <button
                 onClick={() => setSearchOpen(true)}
-                className="p-2 text-zinc-300 hover:text-white transition"
+                className="p-2 text-zinc-700 hover:text-black transition"
                 aria-label="Search store"
               >
                 <Search className="w-5 h-5" />
@@ -100,7 +100,7 @@ export default function Header() {
               {/* Account Link */}
               <Link
                 href="/account"
-                className="p-2 text-zinc-300 hover:text-white transition"
+                className="p-2 text-zinc-700 hover:text-black transition"
                 aria-label="Customer account"
               >
                 <User className="w-5 h-5" />
@@ -109,12 +109,12 @@ export default function Header() {
               {/* Cart Button */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="p-2 text-zinc-300 hover:text-white relative transition group"
+                className="p-2 text-zinc-700 hover:text-black relative transition group"
                 aria-label="View shopping bag"
               >
                 <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 {cartCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-[#164e32] text-white text-[10px] font-bold rounded-full flex items-center justify-center border border-[#0c0c0c] animate-pulse">
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
                     {cartCount}
                   </span>
                 )}
@@ -123,7 +123,7 @@ export default function Header() {
               {/* Mobile Hamburger Button */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
-                className="p-2 text-zinc-300 hover:text-white lg:hidden"
+                className="p-2 text-zinc-700 hover:text-black lg:hidden"
                 aria-label="Open mobile navigation"
               >
                 <Menu className="w-6 h-6" />
@@ -137,23 +137,24 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="fixed top-0 bottom-0 right-0 w-4/5 max-w-sm bg-[#111] border-l border-white/10 p-6 flex flex-col justify-between shadow-2xl animate-fade-in">
+          <div className="fixed top-0 bottom-0 right-0 w-4/5 max-w-sm bg-[#fbfaf8] border-l border-black/10 p-6 flex flex-col justify-between shadow-2xl animate-fade-in text-black">
             <div>
-              <div className="flex items-center justify-between pb-6 border-b border-white/10">
+              <div className="flex items-center justify-between pb-6 border-b border-black/10">
                 <div className="relative w-32 h-9">
                   <Image
                     src="/images/logo/roylux-logo.png"
                     alt="RoyLux"
-                    fill
-                    className="object-contain object-left"
+                    width={140}
+                    height={36}
+                    className="h-8 w-auto object-contain filter invert"
                   />
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-2 text-zinc-400 hover:text-white"
+                  className="p-2 text-zinc-600 hover:text-black"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -165,7 +166,7 @@ export default function Header() {
                     key={link.name}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="text-sm uppercase tracking-[0.2em] font-medium text-zinc-300 hover:text-[#d4af37] transition"
+                    className="text-sm uppercase tracking-[0.2em] font-medium text-zinc-800 hover:text-black transition"
                   >
                     {link.name}
                   </Link>
@@ -173,13 +174,13 @@ export default function Header() {
               </div>
             </div>
 
-            <div className="pt-6 border-t border-white/10 text-xs text-zinc-400 space-y-3">
+            <div className="pt-6 border-t border-black/10 text-xs text-zinc-600 space-y-3">
               <Link
                 href="/account"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 hover:text-white transition"
+                className="flex items-center gap-2 hover:text-black transition"
               >
-                <User className="w-4 h-4 text-[#d4af37]" />
+                <User className="w-4 h-4 text-black" />
                 <span>My Account & Orders</span>
               </Link>
               <p className="text-[11px] text-zinc-500">

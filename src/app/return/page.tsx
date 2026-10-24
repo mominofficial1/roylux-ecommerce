@@ -39,37 +39,37 @@ export default function ReturnPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12">
       {/* Header */}
       <div className="text-center max-w-xl mx-auto space-y-3">
-        <span className="text-[11px] uppercase tracking-[0.25em] text-[#d4af37] font-semibold">
+        <span className="text-[11px] uppercase tracking-[0.25em] text-[#8a7226] font-semibold">
           Customer Care & Guarantee
         </span>
-        <h1 className="text-3xl sm:text-4xl font-light text-white uppercase tracking-tight font-serif-luxury">
+        <h1 className="text-3xl sm:text-4xl font-light text-[#121212] uppercase tracking-tight font-serif-luxury">
           RoyLux Return & Exchange
         </h1>
-        <p className="text-zinc-400 text-xs sm:text-sm font-light">
+        <p className="text-stone-600 text-xs sm:text-sm font-light">
           We want you to feel complete confidence in every piece. We offer a simple 7-day return and exchange policy across Bangladesh.
         </p>
       </div>
 
       {submitted ? (
-        <div className="p-8 sm:p-12 rounded-2xl bg-white/5 border border-white/10 text-center space-y-5 animate-fade-in">
-          <div className="w-16 h-16 mx-auto rounded-full bg-[#164e32] flex items-center justify-center text-white shadow-xl shadow-[#164e32]/40">
+        <div className="p-8 sm:p-12 rounded-2xl bg-white border border-stone-200 shadow-sm text-center space-y-5 animate-fade-in">
+          <div className="w-16 h-16 mx-auto rounded-full bg-[#121212] flex items-center justify-center text-white shadow-xl shadow-black/10">
             <CheckCircle2 className="w-9 h-9" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-xl sm:text-2xl font-light text-white uppercase font-serif-luxury">
+            <h2 className="text-xl sm:text-2xl font-light text-[#121212] uppercase font-serif-luxury">
               Return Request Received
             </h2>
-            <p className="text-xs text-zinc-400">
-              Reference ID: <strong className="text-white font-mono">{returnId}</strong>
+            <p className="text-xs text-stone-500">
+              Reference ID: <strong className="text-[#121212] font-mono">{returnId}</strong>
             </p>
           </div>
-          <p className="text-xs text-zinc-300 max-w-md mx-auto leading-relaxed">
-            Our quality concierge team will review your order details and reach out to you at <strong className="text-white">{mobile}</strong> within 24 hours to coordinate doorstep pickup.
+          <p className="text-xs text-stone-600 max-w-md mx-auto leading-relaxed">
+            Our quality concierge team will review your order details and reach out to you at <strong className="text-[#121212]">{mobile}</strong> within 24 hours to coordinate doorstep pickup.
           </p>
           <div className="pt-4 flex justify-center gap-4">
             <Link
               href="/"
-              className="px-6 py-2.5 bg-white text-black hover:bg-[#d4af37] rounded text-xs uppercase font-semibold tracking-wider transition"
+              className="px-6 py-2.5 bg-[#121212] text-white hover:bg-stone-800 rounded text-xs uppercase font-semibold tracking-wider transition"
             >
               Return to Home
             </Link>
@@ -78,14 +78,14 @@ export default function ReturnPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Form (7 cols) */}
-          <form onSubmit={handleSubmit} className="lg:col-span-7 p-6 sm:p-8 rounded-2xl bg-white/5 border border-white/10 space-y-5">
-            <h2 className="text-sm uppercase tracking-[0.2em] font-semibold text-white">
+          <form onSubmit={handleSubmit} className="lg:col-span-7 p-6 sm:p-8 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-5">
+            <h2 className="text-sm uppercase tracking-[0.2em] font-semibold text-[#121212]">
               Submit Return Form
             </h2>
 
             <div className="space-y-4 text-xs">
               <div>
-                <label className="block uppercase tracking-wider text-zinc-400 mb-1 font-medium">
+                <label className="block uppercase tracking-wider text-stone-600 mb-1 font-medium">
                   Order Number *
                 </label>
                 <input
@@ -94,13 +94,13 @@ export default function ReturnPage() {
                   value={orderNumber}
                   onChange={(e) => setOrderNumber(e.target.value)}
                   placeholder="e.g. RL-2026-123456"
-                  className="w-full bg-black/50 border border-white/10 rounded px-3.5 py-2.5 text-white placeholder-zinc-600 focus:outline-none focus:border-[#d4af37]"
+                  className="w-full bg-[#faf9f6] border border-stone-300 rounded px-3.5 py-2.5 text-[#121212] placeholder-stone-400 focus:outline-none focus:border-[#121212]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block uppercase tracking-wider text-zinc-400 mb-1 font-medium">
+                  <label className="block uppercase tracking-wider text-stone-600 mb-1 font-medium">
                     Full Name *
                   </label>
                   <input
@@ -109,12 +109,12 @@ export default function ReturnPage() {
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Your name"
-                    className="w-full bg-black/50 border border-white/10 rounded px-3.5 py-2.5 text-white placeholder-zinc-600 focus:outline-none focus:border-[#d4af37]"
+                    className="w-full bg-[#faf9f6] border border-stone-300 rounded px-3.5 py-2.5 text-[#121212] placeholder-stone-400 focus:outline-none focus:border-[#121212]"
                   />
                 </div>
 
                 <div>
-                  <label className="block uppercase tracking-wider text-zinc-400 mb-1 font-medium">
+                  <label className="block uppercase tracking-wider text-stone-600 mb-1 font-medium">
                     Mobile Number *
                   </label>
                   <input
@@ -123,13 +123,13 @@ export default function ReturnPage() {
                     value={mobile}
                     onChange={(e) => setMobile(e.target.value)}
                     placeholder="01XXXXXXXXX"
-                    className="w-full bg-black/50 border border-white/10 rounded px-3.5 py-2.5 text-white placeholder-zinc-600 focus:outline-none focus:border-[#d4af37]"
+                    className="w-full bg-[#faf9f6] border border-stone-300 rounded px-3.5 py-2.5 text-[#121212] placeholder-stone-400 focus:outline-none focus:border-[#121212]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block uppercase tracking-wider text-zinc-400 mb-1 font-medium">
+                <label className="block uppercase tracking-wider text-stone-600 mb-1 font-medium">
                   Product to Return/Exchange *
                 </label>
                 <input
@@ -138,19 +138,19 @@ export default function ReturnPage() {
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
                   placeholder="e.g. RoyLux Signature Charcoal Hoodie (Size L)"
-                  className="w-full bg-black/50 border border-white/10 rounded px-3.5 py-2.5 text-white placeholder-zinc-600 focus:outline-none focus:border-[#d4af37]"
+                  className="w-full bg-[#faf9f6] border border-stone-300 rounded px-3.5 py-2.5 text-[#121212] placeholder-stone-400 focus:outline-none focus:border-[#121212]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block uppercase tracking-wider text-zinc-400 mb-1 font-medium">
+                  <label className="block uppercase tracking-wider text-stone-600 mb-1 font-medium">
                     Reason *
                   </label>
                   <select
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
-                    className="w-full bg-black/50 border border-white/10 rounded px-3 py-2.5 text-white focus:outline-none focus:border-[#d4af37]"
+                    className="w-full bg-[#faf9f6] border border-stone-300 rounded px-3 py-2.5 text-[#121212] focus:outline-none focus:border-[#121212]"
                   >
                     <option value="size_mismatch">Size Too Large / Small</option>
                     <option value="fabric_defect">Fabric Defect or Damaged</option>
@@ -160,13 +160,13 @@ export default function ReturnPage() {
                 </div>
 
                 <div>
-                  <label className="block uppercase tracking-wider text-zinc-400 mb-1 font-medium">
+                  <label className="block uppercase tracking-wider text-stone-600 mb-1 font-medium">
                     Preferred Resolution *
                   </label>
                   <select
                     value={preferredResolution}
                     onChange={(e) => setPreferredResolution(e.target.value as any)}
-                    className="w-full bg-black/50 border border-white/10 rounded px-3 py-2.5 text-white focus:outline-none focus:border-[#d4af37]"
+                    className="w-full bg-[#faf9f6] border border-stone-300 rounded px-3 py-2.5 text-[#121212] focus:outline-none focus:border-[#121212]"
                   >
                     <option value="replacement">Exchange for Different Size</option>
                     <option value="refund">Full Monetary Refund</option>
@@ -176,7 +176,7 @@ export default function ReturnPage() {
               </div>
 
               <div>
-                <label className="block uppercase tracking-wider text-zinc-400 mb-1 font-medium">
+                <label className="block uppercase tracking-wider text-stone-600 mb-1 font-medium">
                   Additional Details
                 </label>
                 <textarea
@@ -184,13 +184,13 @@ export default function ReturnPage() {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tell us what you'd like us to know..."
-                  className="w-full bg-black/50 border border-white/10 rounded px-3.5 py-2.5 text-white placeholder-zinc-600 focus:outline-none focus:border-[#d4af37]"
+                  className="w-full bg-[#faf9f6] border border-stone-300 rounded px-3.5 py-2.5 text-[#121212] placeholder-stone-400 focus:outline-none focus:border-[#121212]"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3.5 bg-[#164e32] hover:bg-[#1e6341] text-white rounded text-xs uppercase font-semibold tracking-[0.2em] transition shadow-lg shadow-[#164e32]/30"
+                className="w-full py-3.5 bg-[#121212] hover:bg-black text-white rounded text-xs uppercase font-semibold tracking-[0.2em] transition shadow-md"
               >
                 Submit Request
               </button>
@@ -198,28 +198,28 @@ export default function ReturnPage() {
           </form>
 
           {/* Policy Information (5 cols) */}
-          <div className="lg:col-span-5 space-y-6 text-xs text-zinc-400">
-            <div className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-4">
-              <h3 className="uppercase tracking-[0.2em] font-semibold text-white">
+          <div className="lg:col-span-5 space-y-6 text-xs text-stone-600">
+            <div className="p-6 rounded-2xl bg-white border border-stone-200 shadow-sm space-y-4">
+              <h3 className="uppercase tracking-[0.2em] font-semibold text-[#121212]">
                 Policy Highlights
               </h3>
               <ul className="space-y-3">
                 <li className="flex items-start gap-2.5">
-                  <RotateCcw className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
+                  <RotateCcw className="w-4 h-4 text-[#8a7226] shrink-0 mt-0.5" />
                   <span>
-                    <strong>7-Day Window:</strong> Items must be submitted within 7 calendar days from the delivery date.
+                    <strong className="text-[#121212]">7-Day Window:</strong> Items must be submitted within 7 calendar days from the delivery date.
                   </span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-4 h-4 text-[#8a7226] shrink-0 mt-0.5" />
                   <span>
-                    <strong>Pristine Condition:</strong> Garments must be unwashed, unworn, and with original brand tags attached.
+                    <strong className="text-[#121212]">Pristine Condition:</strong> Garments must be unwashed, unworn, and with original brand tags attached.
                   </span>
                 </li>
                 <li className="flex items-start gap-2.5">
-                  <Truck className="w-4 h-4 text-[#d4af37] shrink-0 mt-0.5" />
+                  <Truck className="w-4 h-4 text-[#8a7226] shrink-0 mt-0.5" />
                   <span>
-                    <strong>Doorstep Pickup:</strong> For exchanges within Dhaka, our courier handles swap right at your doorstep.
+                    <strong className="text-[#121212]">Doorstep Pickup:</strong> For exchanges within Dhaka, our courier handles swap right at your doorstep.
                   </span>
                 </li>
               </ul>
