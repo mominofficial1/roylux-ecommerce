@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="bg-[#fbfaf8] text-[#121212] min-h-screen flex flex-col antialiased selection:bg-[#121212] selection:text-white">
         <Header />
-        <main className="flex-1 pt-20 sm:pt-24">{children}</main>
+        <main className="flex-1 pt-24 sm:pt-28">{children}</main>
         <Footer />
       </body>
     </html>

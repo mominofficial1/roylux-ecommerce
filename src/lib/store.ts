@@ -707,6 +707,108 @@ class RoyLuxStore {
   static saveEmployeeCredentials(username: string, password: string) {
     this.set('employee_credentials', { username, password });
   }
+
+  // Customer Authentication & Profiles (Cloud Synced)
+  static getCustomers(): CustomerUser[] {
+    return this.get<CustomerUser[]>('customers', []);
+  }
+
+  static getCurrentCustomer(): CustomerUser | null {
+    if (typeof window === 'undefined') return null;
+    try {
+      const data = localStorage.getItem(this.STORAGE_PREFIX + 'current_customer');
+      return data ? JSON.parse(data) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  static setCurrentCustomer(customer: CustomerUser | null): void {
+    if (typeof window === 'undefined') return;
+    try {
+      if (customer) {
+        localStorage.setItem(this.STORAGE_PREFIX + 'current_customer', JSON.stringify(customer));
+      } else {
+        localStorage.removeItem(this.STORAGE_PREFIX + 'current_customer');
+      }
+      window.dispatchEvent(new Event('roylux-auth-updated'));
+    } catch {
+      // ignore
+    }
+  }
+
+  static registerCustomer(data: {
+    fullName: string;
+    email: string;
+    mobile: string;
+    password: string;
+    address?: {
+      division: string;
+      district: string;
+      area: string;
+      fullAddress: string;
+    };
+  }): { success: boolean; message: string; customer?: CustomerUser } {
+    const customers = this.getCustomers();
+    const existing = customers.find(
+      (c) =>
+        c.email.toLowerCase() === data.email.toLowerCase() ||
+        (c.mobile && data.mobile && c.mobile === data.mobile)
+    );
+
+    if (existing) {
+      return { success: false, message: 'An account with this email or mobile number already exists.' };
+    }
+
+    const newCustomer: CustomerUser = {
+      uid: 'cust-' + Date.now(),
+      fullName: data.fullName.trim(),
+      email: data.email.trim().toLowerCase(),
+      mobile: data.mobile.trim(),
+      password: data.password,
+      address: data.address,
+      createdAt: new Date().toISOString(),
+    };
+
+    customers.unshift(newCustomer);
+    this.set('customers', customers);
+    this.setCurrentCustomer(newCustomer);
+
+    // Sync new customer to Cloud Firestore
+    try {
+      setDoc(doc(db, 'customers', newCustomer.uid), newCustomer).catch((err) => {
+        console.warn('Firebase customer write warning:', err);
+      });
+    } catch (err) {
+      console.warn('Firebase customer error:', err);
+    }
+
+    return { success: true, message: 'Account created successfully!', customer: newCustomer };
+  }
+
+  static loginCustomer(
+    identifier: string,
+    password: string
+  ): { success: boolean; message: string; customer?: CustomerUser } {
+    const customers = this.getCustomers();
+    const q = identifier.trim().toLowerCase();
+    const found = customers.find(
+      (c) =>
+        (c.email.toLowerCase() === q || (c.mobile && c.mobile === q)) &&
+        c.password === password
+    );
+
+    if (!found) {
+      return { success: false, message: 'Invalid email/phone or password.' };
+    }
+
+    this.setCurrentCustomer(found);
+    return { success: true, message: 'Welcome back, ' + found.fullName, customer: found };
+  }
+
+  static logoutCustomer(): void {
+    this.setCurrentCustomer(null);
+  }
 }
 
 export default RoyLuxStore;

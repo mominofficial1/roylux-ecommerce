@@ -6,7 +6,9 @@ import Image from 'next/image';
 import { Search, ShoppingBag, User, Menu, X } from 'lucide-react';
 import CartDrawer from './CartDrawer';
 import SearchModal from './SearchModal';
+import MarqueeBanner from './MarqueeBanner';
 import RoyLuxStore from '@/lib/store';
+import { CustomerUser } from '@/lib/types';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,16 +16,21 @@ export default function Header() {
   const [cartOpen, setCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [currentCustomer, setCurrentCustomer] = useState<CustomerUser | null>(null);
 
   const updateCount = () => {
     const items = RoyLuxStore.getCart();
     setCartCount(items.reduce((acc, item) => acc + item.quantity, 0));
+    setCurrentCustomer(RoyLuxStore.getCurrentCustomer());
   };
 
   useEffect(() => {
     updateCount();
-    const handleUpdate = () => updateCount();
-    window.addEventListener('roylux-cart-updated', handleUpdate);
+    const handleCartUpdate = () => updateCount();
+    const handleAuthUpdate = () => setCurrentCustomer(RoyLuxStore.getCurrentCustomer());
+
+    window.addEventListener('roylux-cart-updated', handleCartUpdate);
+    window.addEventListener('roylux-auth-updated', handleAuthUpdate);
 
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -31,7 +38,8 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener('roylux-cart-updated', handleUpdate);
+      window.removeEventListener('roylux-cart-updated', handleCartUpdate);
+      window.removeEventListener('roylux-auth-updated', handleAuthUpdate);
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
@@ -47,87 +55,103 @@ export default function Header() {
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-[#fbfaf8]/95 backdrop-blur-md py-3.5 shadow-sm border-b border-black/5'
-            : 'bg-[#fbfaf8]/85 backdrop-blur-sm py-4 border-b border-black/5'
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            {/* Left: RoyLux Logo */}
-            <div className="flex-1 flex items-center">
-              <Link href="/" className="inline-block relative group">
-                <div className="flex items-center" style={{ maxWidth: '180px', maxHeight: '48px' }}>
-                  <Image
-                    src="/images/logo/roylux-logo.png"
-                    alt="RoyLux"
-                    width={160}
-                    height={42}
-                    className="h-8 sm:h-10 w-auto object-contain filter invert"
-                    priority
-                  />
-                </div>
-              </Link>
-            </div>
+      <header className="fixed top-0 left-0 right-0 z-40 transition-all duration-300">
+        {/* Top Scrolling Marquee Bar */}
+        <MarqueeBanner />
 
-            {/* Center: Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="text-xs uppercase tracking-[0.2em] font-medium text-zinc-700 hover:text-black transition relative py-1 group"
-                >
-                  {link.name}
-                  <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black transition-all duration-300 group-hover:w-full" />
+        {/* Main Navigation Bar */}
+        <div
+          className={`transition-all duration-300 ${
+            isScrolled
+              ? 'bg-[#fbfaf8]/95 backdrop-blur-md py-3 shadow-sm border-b border-black/5'
+              : 'bg-[#fbfaf8]/85 backdrop-blur-sm py-3.5 border-b border-black/5'
+          }`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between">
+              {/* Left: RoyLux Logo */}
+              <div className="flex-1 flex items-center">
+                <Link href="/" className="inline-block relative group">
+                  <div className="flex items-center" style={{ maxWidth: '180px', maxHeight: '48px' }}>
+                    <Image
+                      src="/images/logo/roylux-logo.png"
+                      alt="RoyLux"
+                      width={160}
+                      height={42}
+                      className="h-8 sm:h-10 w-auto object-contain filter invert"
+                      priority
+                    />
+                  </div>
                 </Link>
-              ))}
-            </nav>
+              </div>
 
-            {/* Right: Actions */}
-            <div className="flex-1 flex items-center justify-end space-x-4 sm:space-x-6">
-              {/* Search Trigger */}
-              <button
-                onClick={() => setSearchOpen(true)}
-                className="p-2 text-zinc-700 hover:text-black transition"
-                aria-label="Search store"
-              >
-                <Search className="w-5 h-5" />
-              </button>
+              {/* Center: Desktop Navigation */}
+              <nav className="hidden lg:flex items-center space-x-8">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="text-xs uppercase tracking-[0.2em] font-medium text-zinc-700 hover:text-black transition relative py-1 group"
+                  >
+                    {link.name}
+                    <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-black transition-all duration-300 group-hover:w-full" />
+                  </Link>
+                ))}
+              </nav>
 
-              {/* Account Link */}
-              <Link
-                href="/account"
-                className="p-2 text-zinc-700 hover:text-black transition"
-                aria-label="Customer account"
-              >
-                <User className="w-5 h-5" />
-              </Link>
+              {/* Right: Actions */}
+              <div className="flex-1 flex items-center justify-end space-x-3 sm:space-x-5">
+                {/* Search Trigger */}
+                <button
+                  onClick={() => setSearchOpen(true)}
+                  className="p-2 text-zinc-700 hover:text-black transition"
+                  aria-label="Search store"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
 
-              {/* Cart Button */}
-              <button
-                onClick={() => setCartOpen(true)}
-                className="p-2 text-zinc-700 hover:text-black relative transition group"
-                aria-label="View shopping bag"
-              >
-                <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                {cartCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
-                    {cartCount}
-                  </span>
-                )}
-              </button>
+                {/* Account Link & Status */}
+                <Link
+                  href="/account"
+                  className="p-2 text-zinc-700 hover:text-black transition flex items-center gap-1.5"
+                  aria-label="Customer account"
+                >
+                  <div className="relative">
+                    <User className="w-5 h-5" />
+                    {currentCustomer && (
+                      <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#164e32] ring-2 ring-white" />
+                    )}
+                  </div>
+                  {currentCustomer && (
+                    <span className="hidden xl:inline text-[11px] font-semibold text-black uppercase tracking-wider">
+                      {currentCustomer.fullName.split(' ')[0]}
+                    </span>
+                  )}
+                </Link>
 
-              {/* Mobile Hamburger Button */}
-              <button
-                onClick={() => setMobileMenuOpen(true)}
-                className="p-2 text-zinc-700 hover:text-black lg:hidden"
-                aria-label="Open mobile navigation"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
+                {/* Cart Button */}
+                <button
+                  onClick={() => setCartOpen(true)}
+                  className="p-2 text-zinc-700 hover:text-black relative transition group"
+                  aria-label="View shopping bag"
+                >
+                  <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  {cartCount > 0 && (
+                    <span className="absolute top-1 right-1 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Mobile Hamburger Button */}
+                <button
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="p-2 text-zinc-700 hover:text-black lg:hidden"
+                  aria-label="Open mobile navigation"
+                >
+                  <Menu className="w-6 h-6" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

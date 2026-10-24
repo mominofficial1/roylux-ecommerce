@@ -60,8 +60,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           className="object-cover object-center transition-all duration-700 ease-out group-hover:scale-105"
         />
 
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10 pointer-events-none">
+        {/* Badges: Moved to top-right corner */}
+        <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 z-10 pointer-events-none">
           {product.isNewArrival && (
             <span className="px-2.5 py-1 bg-black text-white text-[10px] font-bold uppercase tracking-widest rounded-sm shadow-md">
               New Drop

@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ArrowRight, Sparkles, Flame } from 'lucide-react';
 import HeroSlider from '@/components/HeroSlider';
 import ProductCard from '@/components/ProductCard';
+import CustomerReviews from '@/components/CustomerReviews';
 import RoyLuxStore from '@/lib/store';
 import { Product, Category } from '@/lib/types';
 
@@ -104,45 +105,52 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Luxury Promotional Editorial Banner */}
+      {/* 4. Luxury Promotional Editorial Banner - Fully Visible Split Model Showcase */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-2xl overflow-hidden border border-black/10 bg-[#161616] text-white p-8 sm:p-14 lg:p-20 shadow-xl">
-          <div className="relative z-10 max-w-xl space-y-4">
-            <span className="inline-block px-3 py-1 rounded bg-[#164e32] text-white text-[10px] font-bold uppercase tracking-[0.2em]">
-              The Winter Standard
-            </span>
-            <h2 className="text-3xl sm:text-5xl font-light text-white uppercase tracking-tight font-serif-luxury leading-tight">
-              Heavyweight Warmth. <br />
-              Tailored Architecture.
-            </h2>
-            <p className="text-zinc-300 text-sm sm:text-base font-light leading-relaxed">
-              Every RoyLux garment is built using dense 340+ GSM brushed combed cotton fleece, reinforced stitching, and custom hardware aglets designed to withstand winters in immaculate comfort and style.
-            </p>
-            <div className="pt-4 flex flex-wrap gap-4">
-              <Link
-                href="/shop?category=winter-hoodie"
-                className="px-7 py-3.5 bg-white text-black hover:bg-[#b8952b] font-semibold text-xs uppercase tracking-[0.2em] rounded-sm transition shadow-lg"
-              >
-                Shop Winter Hoodies
-              </Link>
-              <Link
-                href="/about"
-                className="px-7 py-3.5 border border-white/30 text-white hover:bg-white/10 font-semibold text-xs uppercase tracking-[0.2em] rounded-sm transition"
-              >
-                Our Craftsmanship
-              </Link>
+        <div className="relative rounded-2xl overflow-hidden border border-stone-200 bg-[#161616] text-white shadow-xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-center">
+            {/* Left Content Column */}
+            <div className="lg:col-span-7 p-8 sm:p-12 lg:p-16 space-y-5">
+              <span className="inline-block px-3 py-1 rounded bg-[#164e32] text-white text-[10px] font-bold uppercase tracking-[0.2em]">
+                The Winter Standard
+              </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white uppercase tracking-tight font-serif-luxury leading-tight">
+                Heavyweight Warmth. <br />
+                Tailored Architecture.
+              </h2>
+              <p className="text-stone-300 text-xs sm:text-sm font-light leading-relaxed max-w-lg">
+                Every RoyLux garment is built using dense 340+ GSM brushed combed cotton fleece, reinforced stitching, and custom hardware aglets designed to withstand winters in immaculate comfort and style.
+              </p>
+              <div className="pt-2 flex flex-wrap gap-3 sm:gap-4">
+                <Link
+                  href="/shop?category=winter-hoodie"
+                  className="px-6 py-3 bg-white text-black hover:bg-[#b8952b] hover:text-black font-semibold text-xs uppercase tracking-[0.2em] rounded transition-all shadow-lg"
+                >
+                  Shop Winter Hoodies
+                </Link>
+                <Link
+                  href="/about"
+                  className="px-6 py-3 border border-white/40 text-white hover:bg-white/10 font-semibold text-xs uppercase tracking-[0.2em] rounded transition"
+                >
+                  Our Craftsmanship
+                </Link>
+              </div>
             </div>
-          </div>
 
-          {/* Background Decorative Accent */}
-          <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-25 pointer-events-none hidden lg:block">
-            <div className="relative w-full h-full">
+            {/* Right Column: 100% Fully Visible Model Image */}
+            <div className="lg:col-span-5 relative w-full h-[360px] sm:h-[440px] lg:h-[500px] bg-stone-900 overflow-hidden">
               <Image
                 src="/images/products/product-1/1-front.jpg"
-                alt="Editorial"
+                alt="RoyLux Model Wearing Love of God Hoodie"
                 fill
-                className="object-cover object-center filter grayscale"
+                priority
+                className="object-cover object-top sm:object-center transition-transform duration-700 hover:scale-105"
+                sizes="(max-width: 1024px) 100vw, 40vw"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent lg:hidden" />
+              <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded bg-black/60 backdrop-blur-md border border-white/20 text-[9px] uppercase tracking-[0.2em] text-[#d4af37] font-semibold">
+                340+ GSM Fleece
+              </div>
             </div>
           </div>
         </div>
@@ -174,6 +182,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* 6. Realistic Customer Reviews Section (Bangladeshi Verified Buyers) */}
+      <CustomerReviews />
     </div>
   );
 }
